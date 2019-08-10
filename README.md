@@ -9,4 +9,5 @@ This project creates TfRecord files from LabelImg XML files and split them into 
 It also creats a prototxt file from json mapping file label_id_map.json and put one in output folder for each set.
 
 ### Note
-This project expects image files and their annotations to be in same folder for now.
+1. This project expects image files and their annotations to be in same folder for now.
+2. The project has dependency on 'configobj'. Install that with `pip install configobj`
