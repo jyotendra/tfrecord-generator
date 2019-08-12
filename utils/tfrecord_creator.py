@@ -9,7 +9,7 @@ import tensorflow as tf
 
 from utils import dataset_util
 from utils.json_to_prototxt import ProtoWriter
-
+from utils.image_resize_util import resize_image
 image_formats = {"jpg": b"jpeg", "jpeg": b"jpeg", "png": b"png"}
 
 '''
@@ -69,7 +69,7 @@ class TfRecordCreator:
                 ymaxs.append(int(bndbox.find("ymax").text) / img_height)
 
         except Exception as e:
-            print(e)
+            print("No bbox found for label: ", e, "Skiping")
 
         tf_example = tf.train.Example(features=tf.train.Features(feature={
             'image/height': dataset_util.int64_feature(img_height),
@@ -109,14 +109,28 @@ class TfRecordWriter:
             data = json.load(json_file)
             return data
 
+    def check_image_and_annotation_exists(self, file):
+        file_base_name = os.path.splitext(file)[0]
+        files_exists = False
+        for img_ext in image_formats:
+            xml_path = os.path.join(self.sample_image_path, file_base_name + ".xml")
+            img_path = os.path.join(self.sample_image_path, file_base_name + "." + img_ext)
+            if (os.path.isfile(xml_path) and os.path.isfile(img_path) and not files_exists):
+                files_exists = True
+                resize_image(img_path, xml_path)
+                break
+        return files_exists
+
+
     def get_files(self):
         cwd = os.getcwd()
         os.chdir(self.sample_image_path)
         for file in glob.glob("*.xml"):
-            self.xml_files.append(os.path.join(self.sample_image_path, file))
+            if self.check_image_and_annotation_exists(file):
+                self.xml_files.append(os.path.join(self.sample_image_path, file))
         os.chdir(cwd)
 
-    def check_folder_or_create(self, output_path):
+    def check_output_folder_or_create(self, output_path):
         if not os.path.isdir(output_path):
             os.mkdir(output_path)
         else:
@@ -132,7 +146,7 @@ class TfRecordWriter:
 
     def create_output_folders(self, sets):
         for set in sets:
-            self.check_folder_or_create(os.path.join(self.output_path, set))
+            self.check_output_folder_or_create(os.path.join(self.output_path, set))
 
     def write_tfrecord_to_set(self, set_name, set_xml_list):
         if len(set_xml_list) == 0:
