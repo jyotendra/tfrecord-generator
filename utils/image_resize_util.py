@@ -1,5 +1,6 @@
 from PIL import Image
 import xml.etree.ElementTree as ET
+import os
 
 MAX_WIDTH = 600
 MAX_HEIGHT = 600
@@ -8,6 +9,7 @@ MAX_PIXELS = MAX_WIDTH * MAX_HEIGHT
 
 def resize_image(img_path, xml_path):
     img = Image.open(img_path)
+    folder_path, image_base_name = os.path.split(img_path)
     width, height = img.size
     if MAX_PIXELS < (width * height) :
         h_ratio = MAX_HEIGHT / height
@@ -40,8 +42,21 @@ def resize_image(img_path, xml_path):
             ymax = bndbox.find("ymax")
             ymax.text = str(int(float(ymax.text) * ratio))
 
-        tree.write(xml_path)
+        current_img_extension = img_path[-3:]
+
+        # if  current_img_extension != "jpg":
+        #     # convert image to jpg
+        #     rgb_im = img.convert('RGB')
+        #     image_base_without_ext = image_base_name.split(".")[0]
+        #     new_file_path = os.path.join(folder_path, image_base_without_ext+ ".jpg")
+        #     rgb_im.save(new_file_path)
+        #     file_name = root.find("filename")
+        #     file_name.text = str(new_file_path)
+
+        # else:
+        #     img.save(img_path)
         img.save(img_path)
+        tree.write(xml_path)
 
 if __name__ == "__main__":
     pass
