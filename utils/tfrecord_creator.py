@@ -169,10 +169,10 @@ class TfRecordWriter:
         random.shuffle(self.xml_files)
         total_files = len(self.xml_files)
 
-        self.write_tfrecord_to_set(sets[0], self.xml_files[0:math.floor(self.test_p * total_files)])
+        self.write_tfrecord_to_set(sets[0], self.xml_files[0:int(self.test_p * total_files)])
         self.write_tfrecord_to_set(sets[1],
-                                   self.xml_files[math.floor(self.test_p * total_files):math.floor(self.val_p * total_files)])
-        self.write_tfrecord_to_set(sets[2], self.xml_files[math.floor(self.val_p * total_files):])
+                                   self.xml_files[int(self.test_p * total_files):int(self.val_p * total_files)])
+        self.write_tfrecord_to_set(sets[2], self.xml_files[int(self.val_p * total_files):])
 
     def write_prototxt(self, set_name):
         proto_file_path = os.path.join(self.output_path, set_name)

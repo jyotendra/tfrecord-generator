@@ -12,9 +12,9 @@ def resize_image(img_path, xml_path):
     folder_path, image_base_name = os.path.split(img_path)
     width, height = img.size
     if MAX_PIXELS < (width * height) :
-        h_ratio = MAX_HEIGHT / height
-        w_ratio = MAX_WIDTH / width
-        ratio = min(h_ratio, w_ratio)
+        h_ratio = float(MAX_HEIGHT / height)
+        w_ratio = float(MAX_WIDTH / width)
+        ratio = min(h_ratio, w_ratio) or 1
         new_height = int(height * ratio)
         new_width = int(width * ratio)
 
