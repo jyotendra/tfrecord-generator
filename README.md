@@ -11,4 +11,4 @@ It also creats a prototxt file from json mapping file label_id_map.json and put 
 ### Note
 1. This project expects image files and their annotations to be in same folder for now.
 2. The project has dependency on 'configobj'. Install that with `pip install configobj`
-3. Also intall tensorflow with `pip install tensorflow`
+3. Also intall tensorflow with `pip install tensorflow==1.14`
